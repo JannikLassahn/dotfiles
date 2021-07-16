@@ -11,25 +11,78 @@ end
 local init = function()
 	use 'wbthomason/packer.nvim'
 
-	use {"neovim/nvim-lspconfig"}
-	use {"glepnir/lspsaga.nvim", event = "BufRead"}
-	use {"kabouzeid/nvim-lspinstall", event = "BufRead"}
+	use {
+		'neovim/nvim-lspconfig',
+		config = function() 
+			require('plugins.lspconfig')
+		end
+	}
+	use 'kabouzeid/nvim-lspinstall'
+	use {'glepnir/lspsaga.nvim', cmd = 'Lspsaga' } 
+	use { 
+		'hrsh7th/nvim-compe', 
+		event = 'InsertEnter', 
+		config = require('plugins.compe').config 
+	}
+
+	use {
+		'simrat39/symbols-outline.nvim',
+		setup = require('plugins.outline').setup,
+		cmd = { 'SymbolsOutline', 'SymbolsOutlineOpen' }
+	}
 
 	use {
 		'nvim-telescope/telescope.nvim',
+		cmd = 'Telescope',
+		setup = require('plugins.telescope').setup,
+		config = require('plugins.telescope').config,
 		requires = {
-			{'nvim-lua/popup.nvim'},
-			{'nvim-lua/plenary.nvim'},
+			{'nvim-lua/popup.nvim', opt = true},
+			{'nvim-lua/plenary.nvim',opt = true},
+			{'nvim-telescope/telescope-fzy-native.nvim',opt = true},
 		}
 	}
-	use 'nvim-telescope/telescope-fzy-native.nvim'
 	use {
 		'nvim-treesitter/nvim-treesitter',
-		run = ':TSUpdate'
+		run = ':TSUpdate',
+		event = 'BufRead',
+		config = require('plugins.treesitter').config
 	}
 
 	use 'kyazdani42/nvim-web-devicons'
-	use 'kyazdani42/nvim-tree.lua'
+	use {
+		'kyazdani42/nvim-tree.lua',
+		cmd = {'NvimTreeToggle','NvimTreeOpen'},
+		setup = require('plugins.nvim-tree').setup,
+		config = require('plugins.nvim-tree').config,
+    		requires = 'kyazdani42/nvim-web-devicons'
+	}
+
+	use {
+		'glepnir/galaxyline.nvim',
+		branch = 'main',
+		config = function()
+			require 'plugins.statusline'
+		end,
+		requires = 'kyazdani42/nvim-web-devicons'
+	}
+
+	use {
+		'glepnir/dashboard-nvim',
+		config = require('plugins.dashboard').config
+	}
+
+	use {
+		'b3nj5m1n/kommentary',
+		config = require('plugins.kommentary').config,
+		keys = {'gcc', 'gc'}
+	}
+
+	-- Theming
+	use {
+		'glepnir/zephyr-nvim',
+		config = [[vim.cmd('colorscheme zephyr')]]
+	}
 end
 
 return require('packer').startup(init)

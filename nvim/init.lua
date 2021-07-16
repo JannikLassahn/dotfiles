@@ -1,7 +1,4 @@
-require('general/settings')
-require('general/mappings')
+require('settings')
+require('mappings')
 
 require('plugins')
-require('plugins/treesitter')
-require('plugins/telescope')
-require('plugins/tree')
