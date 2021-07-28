@@ -18,7 +18,9 @@ local init = function()
 		end
 	}
 	use 'kabouzeid/nvim-lspinstall'
+
 	use {'glepnir/lspsaga.nvim', cmd = 'Lspsaga' } 
+
 	use { 
 		'hrsh7th/nvim-compe', 
 		event = 'InsertEnter', 
@@ -37,9 +39,9 @@ local init = function()
 		setup = require('plugins.telescope').setup,
 		config = require('plugins.telescope').config,
 		requires = {
-			{'nvim-lua/popup.nvim', opt = true},
-			{'nvim-lua/plenary.nvim',opt = true},
-			{'nvim-telescope/telescope-fzy-native.nvim',opt = true},
+			{ 'nvim-lua/popup.nvim', opt = true},
+			{ 'nvim-lua/plenary.nvim', opt = true},
+			{ 'nvim-telescope/telescope-fzy-native.nvim', opt = true},
 		}
 	}
 	use {
@@ -50,12 +52,13 @@ local init = function()
 	}
 
 	use 'kyazdani42/nvim-web-devicons'
+
 	use {
 		'kyazdani42/nvim-tree.lua',
 		cmd = {'NvimTreeToggle','NvimTreeOpen'},
 		setup = require('plugins.nvim-tree').setup,
 		config = require('plugins.nvim-tree').config,
-    		requires = 'kyazdani42/nvim-web-devicons'
+		requires = 'kyazdani42/nvim-web-devicons'
 	}
 
 	use {
@@ -68,14 +71,13 @@ local init = function()
 	}
 
 	use {
-		'glepnir/dashboard-nvim',
-		config = require('plugins.dashboard').config
-	}
-
-	use {
 		'b3nj5m1n/kommentary',
 		config = require('plugins.kommentary').config,
 		keys = {'gcc', 'gc'}
+	}
+
+	use {
+		'airblade/vim-rooter',
 	}
 
 	-- Theming

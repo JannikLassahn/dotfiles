@@ -113,14 +113,8 @@ gls.left[1] = {
         highlight = { colors.bg, colors.bg, 'bold' },
     },
 }
--- gls.left[2] = {
---     Space = {
---         provider = function() return ' ' end,
---         highlight = { colors.section_bg, colors.section_bg }
---     }
--- }
-gls.left[3] = {
-    GitBranch = {
+gls.left[2] = {
+		GitBranch = {
         provider = {
             function()
                 return '   '
@@ -134,13 +128,13 @@ gls.left[3] = {
         highlight = { colors.middlegrey, colors.section_bg },
     },
 }
-gls.left[4] = {
-    FilePath = {
-	provider = 'FileName', 
-	separator = '  ',
-	condition = condition.buffer_not_empty,
-        highlight = { colors.middlegrey, colors.bg },
-    },
+gls.left[3] = {
+	FilePath = {
+		provider = 'FileName', 
+		condition = condition.buffer_not_empty,
+		separator = ' ',
+		highlight = { colors.middlegrey, colors.bg },
+	}
 }
 gls.left[8] = {
     DiagnosticsCheck = {
