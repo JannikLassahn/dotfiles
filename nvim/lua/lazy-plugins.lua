@@ -27,7 +27,8 @@ require('lazy').setup {
 
   require 'plugins/treesitter',
 
-  -- require 'plugins.debug',
+  require 'plugins.debug',
+
   -- require 'plugins.indent_line',
   -- require 'plugins.lint',
   -- require 'plugins.autopairs',

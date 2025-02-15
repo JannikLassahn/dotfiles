@@ -8,22 +8,21 @@ local function join(...)
   return table.concat({ ... }, '/')
 end
 
-local jdtls = require 'jdtls'
-local home_dir = os.getenv 'HOME'
-local jdtls_pkg_dir = get_shared_pkg 'jdtls'
--- local lombok_pkg_dir = get_shared_pkg 'lombok-nightly'
-
--- local lombok_path = join(lombok_pkg_dir, 'lombok.jar')
-local equinox_path = join(jdtls_pkg_dir, 'plugins', 'org.eclipse.equinox.launcher.jar')
-
-local nvim_cache_dir = vim.fn.stdpath 'cache'
-local jdtls_config_dir = join(jdtls_pkg_dir, 'config')
-
 local root_markers = { 'mvnw', 'pom.xml', '.git' }
 local root_dir = vim.fs.root(0, root_markers)
 if not root_dir then
   return
 end
+
+local jdtls = require 'jdtls'
+local home_dir = os.getenv 'HOME'
+local jdtls_pkg_dir = get_shared_pkg 'jdtls'
+
+local lombok_path = join(jdtls_pkg_dir, 'lombok.jar')
+local equinox_path = join(jdtls_pkg_dir, 'plugins', 'org.eclipse.equinox.launcher.jar')
+
+local nvim_cache_dir = vim.fn.stdpath 'cache'
+local jdtls_config_dir = join(jdtls_pkg_dir, 'config')
 
 local project_name = vim.fn.fnamemodify(root_dir, ':p:h:t')
 local workspace = join(nvim_cache_dir, 'jdtls', 'workspaces', project_name)
@@ -49,7 +48,7 @@ local config = {
     '--add-opens',
     'java.base/java.lang=ALL-UNNAMED',
 
-    -- '-javaagent:' .. lombok_path,
+    '-javaagent:' .. lombok_path,
 
     '-jar',
     equinox_path,
@@ -89,11 +88,10 @@ local config = {
       signatureHelp = { enabled = true },
       format = {
         enabled = true,
-        -- Formatting works by default, but you can refer to a specific file/URL if you choose
-        -- settings = {
-        --   url = "https://github.com/google/styleguide/blob/gh-pages/intellij-java-google-style.xml",
-        --   profile = "GoogleStyle",
-        -- },
+        settings = {
+          url = 'https://github.com/google/styleguide/blob/gh-pages/intellij-java-google-style.xml',
+          profile = 'GoogleStyle',
+        },
       },
     },
     completion = {
@@ -130,46 +128,61 @@ local config = {
 config.handlers['language/status'] = function() end
 
 -- bundles for running tests
--- local plug_jar_map = {
---   ['java-test'] = {
---     'junit-jupiter-api_*.jar',
---     'junit-jupiter-engine_*.jar',
---     'junit-jupiter-migrationsupport_*.jar',
---     'junit-jupiter-params_*.jar',
---     'junit-platform-commons_*.jar',
---     'junit-platform-engine_*.jar',
---     'junit-platform-launcher_*.jar',
---     'junit-platform-runner_*.jar',
---     'junit-platform-suite-api_*.jar',
---     'junit-platform-suite-commons_*.jar',
---     'junit-platform-suite-engine_*.jar',
---     'junit-vintage-engine_*.jar',
---     'org.apiguardian.api_*.jar',
---     'org.eclipse.jdt.junit4.runtime_*.jar',
---     'org.eclipse.jdt.junit5.runtime_*.jar',
---     'org.opentest4j_*.jar',
---     'com.microsoft.java.test.plugin-*.jar',
---   },
---   ['java-debug-adapter'] = { '*.jar' },
--- }
---
--- local bundles = {}
+local plug_jar_map = {
+  ['java-test'] = {
+    'junit-jupiter-*.jar',
+    'junit-platform-*.jar',
+    'junit-vintage-engine_*.jar',
+    'org.apiguardian.api_*.jar',
+    'org.eclipse.jdt.junit4.runtime_*.jar',
+    'org.eclipse.jdt.junit5.runtime_*.jar',
+    'org.opentest4j_*.jar',
+    'org.jacoco.*.jar',
+    'com.microsoft.java.test.plugin-*.jar',
+  },
+  ['java-debug-adapter'] = {
+    'com.microsoft.java.debug.plugin-*.jar',
+  },
+}
 
--- for plugin, jar_patterns in pairs(plug_jar_map) do
---   local root = get_shared_pkg(plugin)
---   for _, jar in ipairs(jar_patterns) do
---     for _, bundle in ipairs(vim.split(vim.fn.glob(join(root, jar)), '\n')) do
---       table.insert(bundles, bundle)
---     end
---   end
--- end
+local bundles = {}
 
--- config.init_options.bundles = bundles
+for plugin, jar_patterns in pairs(plug_jar_map) do
+  local root = get_shared_pkg(plugin)
+  for _, jar in ipairs(jar_patterns) do
+    for _, bundle in ipairs(vim.split(vim.fn.glob(join(root, jar)), '\n')) do
+      table.insert(bundles, bundle)
+    end
+  end
+end
+
+config.init_options['bundles'] = bundles
 
 -- Needed for debugging
--- config['on_attach'] = function(client, bufnr)
---   jdtls.setup_dap { hotcodereplace = 'auto' }
---   require('jdtls.dap').setup_dap_main_class_configs()
--- end
+config['on_attach'] = function(client, bufnr)
+  local function compile()
+    if vim.bo.modified then
+      vim.cmd 'w'
+    end
+    client.request_sync('java/buildWorkspace', false, 5000, bufnr)
+  end
+  local function with_compile(fn)
+    return function()
+      compile()
+      fn()
+    end
+  end
+  local map = function(keys, func, desc, mode)
+    mode = mode or 'n'
+    vim.keymap.set(mode, keys, func, { buffer = bufnr, desc = 'LSP: ' .. desc })
+  end
+
+  map('<leader>tc', with_compile(require('jdtls.dap').test_class), '[T]est [C]lass')
+  map('<leader>tm', with_compile(require('jdtls.dap').test_nearest_method), '[T]est nearest [M]ethod')
+  map('<leader>ts', with_compile(require('jdtls.dap').pick_test), '[T]est [S]elected')
+
+  jdtls.setup_dap { hotcodereplace = 'auto' }
+  require('jdtls.dap').setup_dap_main_class_configs()
+end
 
 return { config = config }
