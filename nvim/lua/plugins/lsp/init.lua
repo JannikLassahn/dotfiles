@@ -1,3 +1,7 @@
+local function get_shared_package(pkg)
+  return require('mason-registry').get_package(pkg):get_install_path()
+end
+
 -- LSP Plugins
 return {
   {
@@ -121,7 +125,7 @@ return {
 
       -- Change diagnostic symbols in the sign column (gutter)
       if vim.g.have_nerd_font then
-        local signs = { ERROR = '', WARN = '', INFO = '', HINT = '' }
+        local signs = { ERROR = '', WARN = '', INFO = '', HINT = '󰌶' }
         local diagnostic_signs = {}
         for type, icon in pairs(signs) do
           diagnostic_signs[vim.diagnostic.severity[type]] = icon
@@ -137,13 +141,28 @@ return {
       capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
 
       -- Enable the following language servers
-      --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
+      -- They will automatically be installed.
       local servers = {
         angularls = {},
         gopls = {},
         jdtls = {},
         jsonls = {},
         lua_ls = {},
+        vtsls = {
+          settings = {
+            vtsls = {
+              tsserver = {
+                globalPlugins = {
+                  {
+                    name = '@angular/language-server',
+                    location = get_shared_package 'angular-language-server' .. '/node_modules/@angular/language-server',
+                    enableForWorkspaceTypeScriptVersions = false,
+                  },
+                },
+              },
+            },
+          },
+        },
       }
 
       -- Ensure the servers and tools above are installed
@@ -162,6 +181,7 @@ return {
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
+        'prettierd', -- Used to format TS/JS/HTML
 
         'java-test', -- Java test runner
         'java-debug-adapter', -- Java debug server for DAP

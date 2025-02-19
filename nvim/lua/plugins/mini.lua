@@ -17,6 +17,8 @@ return {
       -- - sr)'  - [S]urround [R]eplace [)] [']
       require('mini.surround').setup()
 
+      require('mini.pairs').setup()
+
       local misc = require 'mini.misc'
       misc.setup {}
       misc.setup_auto_root()

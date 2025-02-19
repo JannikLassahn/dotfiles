@@ -19,7 +19,7 @@ require('lazy').setup {
 
   require 'plugins/cmp',
 
-  require 'plugins/tokyonight',
+  require 'plugins/colorscheme',
 
   require 'plugins/todo-comments',
 
@@ -29,8 +29,7 @@ require('lazy').setup {
 
   require 'plugins.debug',
 
-  -- require 'plugins.indent_line',
-  -- require 'plugins.lint',
-  -- require 'plugins.autopairs',
   require 'plugins.neo-tree',
+
+  require 'plugins.indent_line',
 }

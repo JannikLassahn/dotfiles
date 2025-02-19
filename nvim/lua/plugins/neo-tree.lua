@@ -21,5 +21,17 @@ return {
         },
       },
     },
+
+    default_component_configs = {
+      git_status = {
+        symbols = {
+          added = '',
+          deleted = '',
+        },
+      },
+      modified = {
+        symbol = '',
+      },
+    },
   },
 }
