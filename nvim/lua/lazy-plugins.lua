@@ -32,4 +32,6 @@ require('lazy').setup {
   require 'plugins.neo-tree',
 
   require 'plugins.indent_line',
+
+  require 'plugins.markdown',
 }
