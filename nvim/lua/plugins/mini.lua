@@ -19,10 +19,6 @@ return {
 
       require('mini.pairs').setup()
 
-      local misc = require 'mini.misc'
-      misc.setup {}
-      misc.setup_auto_root()
-
       local statusline = require 'mini.statusline'
       statusline.setup { use_icons = vim.g.have_nerd_font }
 
