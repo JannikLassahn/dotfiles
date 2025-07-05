@@ -24,8 +24,9 @@ local equinox_path = join(jdtls_pkg_dir, 'plugins', 'org.eclipse.equinox.launche
 local nvim_cache_dir = vim.fn.stdpath 'cache'
 local jdtls_config_dir = join(jdtls_pkg_dir, 'config')
 
-local project_name = vim.fn.fnamemodify(root_dir, ':p:h:t')
-local workspace = join(nvim_cache_dir, 'jdtls', 'workspaces', project_name)
+local project_path = vim.fn.fnamemodify(root_dir, ':p')
+local workspace_key = project_path:gsub('/', '_')
+local workspace = join(nvim_cache_dir, 'jdtls', 'workspaces', workspace_key)
 
 local capabilities = require('blink.cmp').get_lsp_capabilities()
 
