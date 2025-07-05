@@ -28,9 +28,25 @@ return {
       -- [[ Configure Telescope ]]
       -- See `:help telescope` and `:help telescope.setup()`
       require('telescope').setup {
+        defaults = {
+          mappings = {
+            i = {
+              ['<C-p>'] = require('telescope.actions.layout').toggle_preview,
+            },
+          },
+        },
         pickers = {
           find_files = {
+            prompt_title = false,
             path_display = { 'filename_first' },
+          },
+          builtin = {
+            theme = 'dropdown',
+            previewer = false,
+          },
+          help_tags = {
+            theme = 'dropdown',
+            previewer = false,
           },
         },
         extensions = {

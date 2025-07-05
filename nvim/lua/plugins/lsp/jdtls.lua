@@ -27,8 +27,7 @@ local jdtls_config_dir = join(jdtls_pkg_dir, 'config')
 local project_name = vim.fn.fnamemodify(root_dir, ':p:h:t')
 local workspace = join(nvim_cache_dir, 'jdtls', 'workspaces', project_name)
 
-local capabilities = vim.lsp.protocol.make_client_capabilities()
-capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
+local capabilities = require('blink.cmp').get_lsp_capabilities()
 
 -- See `:help vim.lsp.start_client` for an overview of the supported `config` options.
 local config = {
@@ -70,6 +69,10 @@ local config = {
           {
             name = 'JavaSE-21',
             path = home_dir .. '/.sdkman/candidates/java/21.0.2-open',
+          },
+          {
+            name = 'JavaSE-23',
+            path = home_dir .. '/.sdkman/candidates/java/23.0.1-open',
           },
         },
       },
